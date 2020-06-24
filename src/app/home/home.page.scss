@@ -1,27 +1,167 @@
-#container {
-  text-align: center;
+ion-header {
+    z-index: 1000;
 
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+    ion-title {
+        font-size: 30px;
+    }
+
+    &.spacer {
+        background-color: rgba(255, 255, 255, 1);
+        ion-toolbar {
+            --border-width: 0px;
+        }
+    }
+
+    &.in_content {
+        position: fixed;
+        background-image: linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 1) 0%,
+            rgba(255, 255, 255) 20%,
+            rgba(255, 255, 255, 0) 30%
+        );
+        right: 10px;
+        top: 44px;
+        width: calc(100% - 10px);
+    }
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+ion-content {
+    z-index: 1;
+    --padding-top: 0px;
+    --padding-bottom: 0px;
+
+    div.scroll_container {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: scroll;
+        padding-top: 242px;
+
+        &::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        &::-webkit-scrollbar-button {
+            width: 0px;
+            height: 0px;
+        }
+        &::-webkit-scrollbar-thumb {
+            background: rgb(160, 160, 160);
+        }
+        &::-webkit-scrollbar-thumb:hover {
+            background: rgb(180, 180, 180);
+        }
+        &::-webkit-scrollbar-thumb:active {
+            background: rgb(150, 150, 150);
+        }
+        &::-webkit-scrollbar-track {
+            background: rgb(230, 230, 230);
+        }
+        &::-webkit-scrollbar-track:hover {
+            background: rgb(230, 230, 230);
+        }
+        &::-webkit-scrollbar-track:active {
+            background: rgb(230, 230, 230);
+        }
+        &::-webkit-scrollbar-corner {
+            background: rgb(255, 255, 255);
+        }
+    }
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
+ion-toolbar {
+    --background: rgb(248, 252, 255);
+    --opacity: 0.7;
 }
 
-#container a {
-  text-decoration: none;
+ion-grid.file_report_info {
+    margin-top: 0px;
+    padding-top: 0px;
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+
+    ion-col {
+        margin-top: 0px;
+        padding-top: 0px;
+        margin-bottom: 0px;
+        padding-bottom: 0px;
+    }
+
+    ion-list {
+        margin: 0px;
+        padding: 0px;
+        --background: rgba(255, 255, 255, 0);
+        --ion-item-background: rgba(255, 255, 255, 0);
+
+        ion-list-header {
+            font-size: 14px;
+            color: rgb(100, 100, 100);
+            font-weight: 500;
+            min-height: 20px;
+        }
+
+        ion-item {
+            --inner-padding-start: 5px;
+            --min-height: 32px;
+            --background: rgba(255, 255, 255, 0);
+
+            ion-label {
+                font-size: 16px;
+                color: rgb(20, 20, 20);
+                font-weight: 400;
+                margin-top: 4px;
+                margin-bottom: 4px;
+                background-color: rgba(255, 255, 255, 0);
+            }
+
+            p {
+                font-size: 16px;
+                font-weight: 500;
+                margin-top: 4px;
+                margin-bottom: 4px;
+                background-color: rgba(255, 255, 255, 0);
+            }
+        }
+    }
+}
+
+.source_code_container {
+    font-family: "Source Code Pro";
+    min-width: calc(100% - 10px);
+    background-image: linear-gradient(
+        to right,
+        rgb(220, 220, 225) 0px,
+        rgb(220, 220, 225) 59px,
+        rgb(255, 255, 255) 60px,
+        rgb(255, 255, 255) 100%
+    );
+    margin: 5px 10px;
+    position: relative;
+    border: 0.55px solid rgb(200, 200, 200);
+    border-radius: 5px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.25);
+
+    pre {
+        margin: 0px;
+        padding: 0px;
+        counter-reset: line;
+        font-family: "Source Code Pro";
+        font-size: 14px;
+        line-height: 0.8;
+        overflow: hidden;
+        white-space: pre-line;
+    }
+    code {
+        counter-increment: line;
+    }
+    code:before {
+        content: counter(line);
+        padding-left: 10px;
+        width: 60px;
+        background-color: rgba(255, 255, 255, 0);
+        display: inline-block;
+        --webkit-user-select: none;
+    }
 }

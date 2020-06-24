@@ -1,20 +1,104 @@
-<ion-header [translucent]="true">
+<ion-header class="spacer">
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <!-- Spacing for drag bar -->
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
+<ion-content [scroll-x]="false" [scroll-y]="false">
+
+  <ion-header [translucent]="true" class="in_content">
     <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
+      <ion-title size="large">
+        Code coverage results
+      </ion-title>
+    </ion-toolbar>
+    <ion-toolbar>
+      <ion-grid class="file_report_info">
+        <ion-row>
+          <ion-col size="6">
+            <ion-list lines="none">
+              <ion-list-header>
+                Input file information
+              </ion-list-header>
+              <ion-item>
+                <ion-label>Source code filename</ion-label>
+                <ion-text color="dark">
+                  <p>dummy.c</p>
+                </ion-text>
+              </ion-item>
+              <ion-item>
+                <ion-label>Original source file found</ion-label>
+                <ion-text color="success">
+                  <p>Yes</p>
+                </ion-text>
+              </ion-item>
+              <ion-item>
+                <ion-label>Current version tested</ion-label>
+                <ion-text color="success">
+                  <p>Yes</p>
+                </ion-text>
+              </ion-item>
+            </ion-list>
+          </ion-col>
+          <ion-col size="6">
+            <ion-list lines="none">
+              <ion-list-header>
+                Code coverage results
+              </ion-list-header>
+              <ion-item>
+                <ion-label>Function</ion-label>
+                <ion-text color="success">
+                  <p>98.2%</p>
+                </ion-text>
+              </ion-item>
+              <ion-item>
+                <ion-label>Statement</ion-label>
+                <ion-text color="success">
+                  <p>99.1%</p>
+                </ion-text>
+              </ion-item>
+              <ion-item>
+                <ion-label>Branch</ion-label>
+                <ion-text color="success">
+                  <p>96.2%</p>
+                </ion-text>
+              </ion-item>
+              <ion-item>
+                <ion-label>MC/DC</ion-label>
+                <ion-text color="warning">
+                  <p>69.8%</p>
+                </ion-text>
+              </ion-item>
+            </ion-list>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-toolbar>
+    <ion-toolbar>
+      <ion-segment (ionChange)="segmentChanged($event)">
+        <ion-segment-button value="overview">
+          <ion-label>Overview</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="Checkpoint">
+          <ion-label>Checkpoint</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="Evaluation">
+          <ion-label>Evaluation</ion-label>
+        </ion-segment-button>
+      </ion-segment>
     </ion-toolbar>
   </ion-header>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+  <div class="scroll_container ion-padding">
+    <h1>Source code listing</h1>
+    <div class="source_code_container">
+      <pre>
+        <ng-template ngFor let-code_line [ngForOf]="source_code">
+          <code>{{code_line}}</code>
+        </ng-template>
+      </pre>
+    </div>
   </div>
+
+
 </ion-content>

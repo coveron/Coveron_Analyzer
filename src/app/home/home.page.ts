@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { ElectronService } from 'ngx-electron';
+import { MenuController } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
@@ -7,6 +9,41 @@ import { Component } from '@angular/core';
 })
 export class HomePage {
 
-  constructor() {}
+  source_code: string[] = [
+    'int main() {',
+    '    return 0;',
+    '}',
+    'int main() {',
+    '    return 0;',
+    '}',
+    'int main() {',
+    '    return 0;',
+    '}',
+    'int main() {',
+    '    return 0;',
+    '}',
+    'int main() {',
+    '    return 0;',
+    '}',
+    'int main() {',
+    '    return 0;',
+    '}',
+    'int main() {',
+    '    return 0;',
+    '}',
+    'int main() {',
+    '    return 0;',
+    '}',
+    'int main() {',
+    '    return 0;',
+    '}',
+    'int main() {',
+    '    return 0;',
+    '}'
+  ]
+
+  constructor(private electronSvc: ElectronService) {
+  }
+
 
 }

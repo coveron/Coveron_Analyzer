@@ -1,5 +1,7 @@
 {
   "name": "Codeconut_Analyzer",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "angular"
 }

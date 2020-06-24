@@ -1,0 +1,154 @@
+div.drag_toolbar {
+    position: absolute;
+    width: 100%;
+    height: 40px;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+
+    div.drag_area {
+        z-index: 0;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        content: "";
+        top: 2px;
+        left: 2px;
+        right: 2px;
+        bottom: 0px;
+        -webkit-app-region: drag;
+    }
+
+    div.custom_controls {
+        height: 100%;
+        position: absolute;
+        top: 2px;
+        right: 0px;
+        white-space: nowrap;
+        -webkit-app-region: no-drag;
+        z-index: 10;
+
+        div.button {
+            position: relative;
+            left: 0px;
+            right: 0px;
+            top: 0px;
+            bottom: 0px;
+            height: 100%;
+            width: 30px;
+            margin: 5px 10px;
+            font-size: 18px;
+            display: inline-block;
+            text-align: center;
+
+            &:hover {
+                color: #a0a0a0;
+            }
+        }
+    }
+}
+
+#minimize_btn {
+    &:hover {
+        color: #dab823;
+    }
+
+    &:active {
+        color: #b3971d;
+    }
+}
+
+#maximize_btn,
+#restore_btn {
+    &:hover {
+        color: #10be2d;
+    }
+
+    &:active {
+        color: #0f9726;
+    }
+}
+
+#close_btn {
+    &:hover {
+        color: #dd1e1e;
+    }
+
+    &:active {
+        color: #af1818;
+    }
+}
+
+ion-split-pane.split_pane_view {
+    --side-max-width: 220px;
+    --side-min-width: 220px;
+}
+
+ion-menu.side_menu {
+    --background: rgb(240, 250, 255);
+
+    ion-content {
+        --background: rgba(255, 255, 255, 0);
+        box-shadow: inset -5px 0px 15px -10px rgba(0, 0, 0, 0.2) !important;
+
+        ion-header {
+            --border-width: 0px;
+            --background: rgba(255, 255, 255, 0);
+
+            ion-toolbar {
+                --border-width: 0px;
+                --background: rgba(255, 255, 255, 0);
+
+                ion-title {
+                    img {
+                        max-width: calc(100% - 16px);
+                        border: 0px;
+                        margin: 8px;
+                        top: 0px;
+                        left: 0px;
+                        right: 0px;
+                        bottom: 0px;
+                        position: absolute;
+                    }
+                }
+            }
+        }
+
+        ion-list {
+            position: absolute;
+            width: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+
+            --background: rgba(255, 255, 255, 0);
+            --ion-item-background: rgba(255, 255, 255, 0);
+
+            ion-list-divider {
+                font-size: 14px;
+                color: rgb(100, 100, 100);
+                font-weight: 500;
+                margin-left: 16px;
+            }
+
+            ion-item {
+                --inner-padding-start: 2px;
+                --color: rgb(40, 40, 40);
+                font-size: 16px;
+                margin: 0px 8px;
+                width: calc(100% - 16px);
+                --border-radius: 8px;
+                --background: rgba(255, 255, 255, 0);
+                --background-hover: rgb(0, 0, 0);
+                --background-hover-opacity: 8%;
+                --background-activated: var(--ion-color-primary);
+                --background-activated-opacity: 60%;
+                --color-activated: rgb(255, 255, 255);
+
+                ion-icon {
+                    margin-right: 8px;
+                }
+            }
+        }
+    }
+}

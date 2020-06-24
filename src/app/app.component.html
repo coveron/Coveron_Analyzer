@@ -1,3 +1,81 @@
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  <div class="drag_toolbar">
+    <div class="drag_area">
+
+    </div>
+    <div class="custom_controls" [hidden]="!this.electronSvc.isWindows">
+      <div (click)="minimizeApp()" class="button" id="minimize_btn">
+        <ion-icon name="remove-outline"></ion-icon>
+      </div>
+      <div (click)="maximizeApp()" class="button" id="maximize_btn" [hidden]="this.electronWindow.isMaximized()">
+        <ion-icon name="tablet-landscape-outline"></ion-icon>
+      </div>
+      <div (click)="restoreApp()" class="button" id="restore_btn" [hidden]="!this.electronWindow.isMaximized()">
+        <ion-icon name="albums-outline"></ion-icon>
+      </div>
+      <div (click)="closeApp()" class="button" id="close_btn">
+        <ion-icon name="close-outline"></ion-icon>
+      </div>
+    </div>
+  </div>
+
+  <ion-split-pane contentId="main" when="(min-width: 10px)" class="split_pane_view">
+    <ion-menu side="start" menuId="first" contentId="main" swipeGesture="false" type="push" class="side_menu">
+      <ion-content>
+        <ion-header>
+          <ion-toolbar>
+            <!-- Spacing for draggable control bar -->
+          </ion-toolbar>
+          <ion-toolbar>
+            <ion-title size="large">
+              <img src="assets/side_menu_logo.png" alt="Codeconut" />
+            </ion-title>
+          </ion-toolbar>
+        </ion-header>
+        <ion-list class="side_menu_options" lines="none">
+          <ion-list-divider>
+            Quick actions
+          </ion-list-divider>
+          <ion-item button detail="false" (click)="openFile()">
+            <ion-icon name="open-outline" color="primary"></ion-icon>
+            Open file
+          </ion-item>
+          <ion-item button detail="false" (click)="closeFile()">
+            <ion-icon name="close-circle-outline" color="primary"></ion-icon>
+            Close report
+          </ion-item>
+
+          <ion-item></ion-item>
+
+          <ion-list-divider>
+            Export results
+          </ion-list-divider>
+          <ion-item button detail="false" (click)="makeXMLExport()">
+            <ion-icon name="code-working-outline" color="primary"></ion-icon>
+            XML export
+          </ion-item>
+          <ion-item button detail="false" (click)="makeCSVExport()">
+            <ion-icon name="apps-outline" color="primary"></ion-icon>
+            CSV export
+          </ion-item>
+
+          <ion-item></ion-item>
+
+          <ion-list-divider>
+            Other
+          </ion-list-divider>
+          <ion-item button detail="false" (click)="openGitHub()">
+            <ion-icon name="logo-github" color="primary"></ion-icon>
+            Visit on GitHub
+          </ion-item>
+          <ion-item button detail="false" (click)="openDonate()">
+            <ion-icon name="cash-outline" color="primary"></ion-icon>
+            Donate to project
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ion-menu>
+
+    <ion-router-outlet id="main"></ion-router-outlet>
+  </ion-split-pane>
 </ion-app>
