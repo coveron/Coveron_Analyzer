@@ -54,7 +54,8 @@ async function createWindow () {
       webPreferences: {
         nodeIntegration: true,
         preload: path.join(__dirname, 'node_modules', '@capacitor', 'electron', 'dist', 'electron-bridge.js')
-      }
+      },
+      icon: path.join(__dirname, 'icons', 'icon.png')
     })
   }
 

@@ -1,7 +1,7 @@
 {
   "name": "Codeconut_Analyzer",
-  "version": "1.0.0",
-  "description": "An Amazing Capacitor App",
+  "version": "0.0.1",
+  "description": "Analysis tool for Codeconut instrumentation data",
   "main": "index.js",
   "scripts": {
     "electron:start": "electron ./"
@@ -17,6 +17,6 @@
     "capacitor",
     "electron"
   ],
-  "author": "",
-  "license": "ISC"
+  "author": "Glenn Töws",
+  "license": "LGPLv3"
 }

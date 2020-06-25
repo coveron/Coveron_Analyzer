@@ -48,7 +48,9 @@
               <ion-item>
                 <ion-label>Function</ion-label>
                 <ion-text color="success">
-                  <p>98.2%</p>
+                  <p>
+                    98.2%
+                  </p>
                 </ion-text>
               </ion-item>
               <ion-item>
@@ -92,11 +94,16 @@
   <div class="scroll_container ion-padding">
     <h1>Source code listing</h1>
     <div class="source_code_container">
-      <pre>
-        <ng-template ngFor let-code_line [ngForOf]="source_code">
-          <code>{{code_line}}</code>
+      <div class="line_numbers">
+        <ng-template ngFor let-code_line let-i="index" [ngForOf]="source_code">
+          {{i + 1}}<br>
         </ng-template>
-      </pre>
+      </div>
+      <div class="code_lines">
+        <ng-template ngFor let-code_line [ngForOf]="source_code">
+          <div class="code_markup_line">{{code_line}}</div>
+        </ng-template>
+      </div>
     </div>
   </div>
 
