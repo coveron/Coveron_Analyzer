@@ -1,7 +1,7 @@
 {
-  "name": "Codeconut_Analyzer",
+  "name": "Coveron_Analyzer",
   "version": "0.0.1",
-  "description": "Analysis tool for Codeconut instrumentation data",
+  "description": "Analysis tool for Coveron instrumentation data",
   "main": "index.js",
   "scripts": {
     "electron:start": "electron ./"
