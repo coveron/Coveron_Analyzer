@@ -100,10 +100,16 @@ ion-menu.side_menu {
                 --background: rgba(255, 255, 255, 0);
 
                 ion-title {
+
+                    margin: 0px;
+                    padding: 0px;
+
+
                     img {
-                        max-width: calc(100% - 16px);
+                        max-width: calc(100% - 50px);
                         border: 0px;
-                        margin: 8px;
+                        margin: 0 25px;
+                        padding: 0px;
                         top: 0px;
                         left: 0px;
                         right: 0px;

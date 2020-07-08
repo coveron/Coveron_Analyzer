@@ -1,6 +1,6 @@
 {
   "appId": "io.ionic.starter",
-  "appName": "Coveron_Analyzer",
+  "appName": "coveron_analyzer",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "www",

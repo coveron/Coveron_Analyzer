@@ -14,7 +14,7 @@ let mainWindow = null
 let splashScreen = null
 
 // Change this if you do not wish to have a splash screen
-let useSplashScreen = true
+let useSplashScreen = false
 
 // Create simple menu for easy devtools access, and for demo
 const menuTemplateDev = [
@@ -23,7 +23,7 @@ const menuTemplateDev = [
     submenu: [
       {
         label: 'Open Dev Tools',
-        click () {
+        click() {
           mainWindow.openDevTools()
         }
       }
@@ -31,7 +31,7 @@ const menuTemplateDev = [
   }
 ]
 
-async function createWindow () {
+async function createWindow() {
   // Define our main window size
   if (os.platform() === 'darwin') {
     mainWindow = new BrowserWindow({
@@ -43,7 +43,8 @@ async function createWindow () {
       webPreferences: {
         nodeIntegration: true,
         preload: path.join(__dirname, 'node_modules', '@capacitor', 'electron', 'dist', 'electron-bridge.js')
-      }
+      },
+      title: "Coveron"
     })
   } else {
     mainWindow = new BrowserWindow({
@@ -55,7 +56,8 @@ async function createWindow () {
         nodeIntegration: true,
         preload: path.join(__dirname, 'node_modules', '@capacitor', 'electron', 'dist', 'electron-bridge.js')
       },
-      icon: path.join(__dirname, 'icons', 'icon.png')
+      icon: path.join(__dirname, 'icons', 'icon.png'),
+      title: "Coveron"
     })
   }
 
@@ -69,7 +71,7 @@ async function createWindow () {
   }
 
   if (useSplashScreen) {
-    splashScreen = new CapacitorSplashScreen(mainWindow, { windowHeight: 320, windowWidth: 640 })
+    splashScreen = new CapacitorSplashScreen(mainWindow)
     splashScreen.init()
   } else {
     mainWindow.loadURL(`file://${__dirname}/app/index.html`)

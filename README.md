@@ -1,7 +1,7 @@
 Coveron Analyzer
 ==================
 
-Code coverage analysis tool for c and C++ code. Featuring statement, decision and
+Code coverage analysis tool for C and C++ code. Featuring statement, decision and
 MC/DC coverage.
 
 [website](https://coveron.github.io/) •

@@ -1,5 +1,5 @@
 {
-  "name": "Coveron_Analyzer",
+  "name": "coveron_analyzer",
   "integrations": {
     "capacitor": {}
   },
