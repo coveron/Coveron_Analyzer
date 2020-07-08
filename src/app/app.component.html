@@ -3,7 +3,7 @@
     <div class="drag_area">
 
     </div>
-    <div class="custom_controls" [hidden]="!this.electronSvc.isWindows">
+    <div class="custom_controls" [hidden]="this.electronSvc.isMacOS">
       <div (click)="minimizeApp()" class="button" id="minimize_btn">
         <ion-icon name="remove-outline"></ion-icon>
       </div>
