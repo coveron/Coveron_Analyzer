@@ -67,7 +67,7 @@ async function createWindow() {
     // Set our above template to the Menu Object if we are in development mode, dont want users having the devtools.
     Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplateDev))
     // If we are developers we might as well open the devtools by default.
-    mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
   }
 
   if (useSplashScreen) {
@@ -99,8 +99,12 @@ app.on('activate', function () {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
-    createWindow()
+    //createWindow()
   }
 })
 
 // Define any IPC or other custom functionality below here
+const { AnalyzerMain } = require("../dist/out-tsc/analyzer/AnalyzerMain");
+
+let analyzer_main = new AnalyzerMain("D:\\Arbeit\\Coveron_Instrumenter\\test_code.cid", null)
+
