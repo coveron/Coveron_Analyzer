@@ -1,13 +1,15 @@
-import { exec } from 'child_process';
-
 export { };
 
-const { from2BytesToNumber, from4BytesToNumber } = require("./Tools");
+const { MarkerType, MarkerResult, from2BytesToNumber, from4BytesToNumber } = require("./Tools");
+const { CIDHelper } = require("./CIDHelper");
 
 class CRIParser {
 
     cid_data: object;
     cri_file_content: Uint8Array;
+    cid_helper;
+
+    temp_condition_markers = [];
 
 
     constructor(cid_data: object, cri_file_content: Uint8Array) {
@@ -18,6 +20,9 @@ class CRIParser {
         if (!this.parse_header()) {
             throw new Error("CRI file doesn't include a valid CRI header!");
         }
+
+        // create CIDHelper instance
+        this.cid_helper = new CIDHelper(cid_data);
     }
 
     parse_header() {
@@ -85,6 +90,7 @@ class CRIParser {
         // start parsing for every execution
         execution_data.forEach(execution => {
             this.start_execution_parsing(execution);
+            this.cid_data['recorded_executions'] = (this.cid_data['recorded_executions'] + 1) || 1;
         });
     }
 
@@ -109,7 +115,61 @@ class CRIParser {
             execution_comment = execution_comment.slice(1, execution_comment.length - 1);
         }
 
-        console.log("Execution comment: " + execution_comment)
+        // iterate over all remaining data (all the markers)
+        for (null; cursor < execution_data.length; cursor += 5) {
+            // check if the data is corrupted (remaining data length is less than one full marker)
+            if (execution_data.length - cursor < 5) {
+                throw new Error("Corrupted marker data");
+            }
+
+            let marker_id = from4BytesToNumber(new Uint8Array(execution_data.slice(cursor, cursor + 4)));
+
+            // check, if this is a condition marker (temporarily save in condition store)
+            if (this.cid_helper.get_marker_type(marker_id) == MarkerType.CONDITION) {
+                let marker_result;
+                if (execution_data[cursor + 4] == 0xA6) {
+                    marker_result = MarkerResult.TRUE;
+                } else if (execution_data[cursor + 4] == 0x59) {
+                    marker_result = MarkerResult.FALSE;
+                } else {
+                    throw new Error("Undefined marker result for evaluation marker!");
+                }
+
+                this.temp_condition_markers.push({ "evaluation_marker_id": marker_id, "result": marker_result });
+
+                continue;
+            }
+
+            // check, if this is a decision marker (load data from temporary store and clear it)
+            if (this.cid_helper.get_marker_type(marker_id) == MarkerType.DECISION) {
+                if (this.temp_condition_markers.length == 0) {
+                    throw new Error("Marker data corrupted! Expected condition evaluation before decision evaluation.");
+                }
+                let marker_result;
+                if (execution_data[cursor + 4] == 0xA6) {
+                    marker_result = MarkerResult.TRUE;
+                } else if (execution_data[cursor + 4] == 0x59) {
+                    marker_result = MarkerResult.FALSE;
+                } else {
+                    throw new Error("Undefined marker result for evaluation marker!");
+                }
+
+                // create data for CIDHelper
+                let evaluation_exec_data = { "decision_marker_id": marker_id, "decision_result": marker_result, "conditions": this.temp_condition_markers.slice() }
+
+                // clear temp evaluation marker storage
+                this.temp_condition_markers = [];
+
+                this.cid_helper.add_evaluation_execution(evaluation_exec_data);
+
+                continue;
+            }
+
+            // check, if this is a checkpoint marker
+            if (this.cid_helper.get_marker_type(marker_id) == MarkerType.CHECKPOINT) {
+                this.cid_helper.add_statement_execution(marker_id);
+            }
+        }
 
     }
 

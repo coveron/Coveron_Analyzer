@@ -1,5 +1,21 @@
 export { };
 
+enum MarkerType {
+    CHECKPOINT = 1,
+    CONDITION = 2,
+    DECISION = 4,
+    MISSING = 8
+};
+exports.MarkerType = MarkerType;
+
+
+enum MarkerResult {
+    STATEMENT = 1,
+    TRUE = 2,
+    FALSE = 4
+};
+exports.MarkerResult = MarkerResult;
+
 function isBigEndian() {
     // check if the host uses big or small endian
     var b = new ArrayBuffer(4);

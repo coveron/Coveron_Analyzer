@@ -40,6 +40,7 @@
             <ion-icon name="open-outline" color="primary"></ion-icon>
             Open file
           </ion-item>
+          <input type="file" style="display: none;" id="file-opener" accept=".cid" (change)="openFileHandler()" />
           <ion-item button detail="false" (click)="closeFile()">
             <ion-icon name="close-circle-outline" color="primary"></ion-icon>
             Close report

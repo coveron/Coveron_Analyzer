@@ -4,94 +4,112 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [scroll-x]="false" [scroll-y]="false">
+<ion-content>
 
   <ion-header [translucent]="true" class="in_content">
-    <ion-toolbar>
-      <ion-title size="large">
-        Code coverage results
-      </ion-title>
-    </ion-toolbar>
-    <ion-toolbar>
-      <ion-grid class="file_report_info">
-        <ion-row>
-          <ion-col size="6">
-            <ion-list lines="none">
-              <ion-list-header>
-                Input file information
-              </ion-list-header>
-              <ion-item>
-                <ion-label>Source code filename</ion-label>
-                <ion-text color="dark">
-                  <p>dummy.c</p>
-                </ion-text>
-              </ion-item>
-              <ion-item>
-                <ion-label>Original source file found</ion-label>
-                <ion-text color="success">
-                  <p>Yes</p>
-                </ion-text>
-              </ion-item>
-              <ion-item>
-                <ion-label>Current version tested</ion-label>
-                <ion-text color="success">
-                  <p>Yes</p>
-                </ion-text>
-              </ion-item>
-            </ion-list>
-          </ion-col>
-          <ion-col size="6">
-            <ion-list lines="none">
-              <ion-list-header>
-                Code coverage results
-              </ion-list-header>
-              <ion-item>
-                <ion-label>Function</ion-label>
-                <ion-text color="success">
-                  <p>
-                    98.2%
-                  </p>
-                </ion-text>
-              </ion-item>
-              <ion-item>
-                <ion-label>Statement</ion-label>
-                <ion-text color="success">
-                  <p>99.1%</p>
-                </ion-text>
-              </ion-item>
-              <ion-item>
-                <ion-label>Branch</ion-label>
-                <ion-text color="success">
-                  <p>96.2%</p>
-                </ion-text>
-              </ion-item>
-              <ion-item>
-                <ion-label>MC/DC</ion-label>
-                <ion-text color="warning">
-                  <p>69.8%</p>
-                </ion-text>
-              </ion-item>
-            </ion-list>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </ion-toolbar>
-    <ion-toolbar>
-      <ion-segment (ionChange)="segmentChanged($event)">
-        <ion-segment-button value="overview">
-          <ion-label>Overview</ion-label>
-        </ion-segment-button>
-        <ion-segment-button value="Checkpoint">
-          <ion-label>Checkpoint</ion-label>
-        </ion-segment-button>
-        <ion-segment-button value="Evaluation">
-          <ion-label>Evaluation</ion-label>
-        </ion-segment-button>
-      </ion-segment>
-    </ion-toolbar>
+    <ng-container *ngIf="dataStore.file_loaded">
+      <ion-toolbar>
+        <ion-title size="large">
+          Code coverage results
+        </ion-title>
+      </ion-toolbar>
+      <ion-toolbar>
+        <ion-grid class="file_report_info">
+          <ion-row>
+            <ion-col size="6">
+              <ion-list lines="none">
+                <ion-list-header>
+                  Input file information
+                </ion-list-header>
+                <ion-item>
+                  <ion-label>Source code filename</ion-label>
+                  <ion-text color="dark">
+                    <p>dummy.c</p>
+                  </ion-text>
+                </ion-item>
+                <ion-item>
+                  <ion-label>Recorded executions in CRI file</ion-label>
+                  <ion-text color="dark">
+                    <p>5</p>
+                  </ion-text>
+                </ion-item>
+                <ion-item>
+                  <ion-label>Original source file found</ion-label>
+                  <ion-text color="success">
+                    <p>Yes</p>
+                  </ion-text>
+                </ion-item>
+                <ion-item>
+                  <ion-label>Current version tested</ion-label>
+                  <ion-text color="success">
+                    <p>Yes</p>
+                  </ion-text>
+                </ion-item>
+              </ion-list>
+            </ion-col>
+            <ion-col size="6">
+              <ion-list lines="none">
+                <ion-list-header>
+                  Code coverage results
+                </ion-list-header>
+                <ion-item>
+                  <ion-label>Function</ion-label>
+                  <ion-text color="success">
+                    <p>
+                      (20/21) 98.2%
+                    </p>
+                  </ion-text>
+                </ion-item>
+                <ion-item>
+                  <ion-label>Statement</ion-label>
+                  <ion-text color="success">
+                    <p>(193/195) 99.1%</p>
+                  </ion-text>
+                </ion-item>
+                <ion-item>
+                  <ion-label>Branch</ion-label>
+                  <ion-text color="success">
+                    <p>(18/19) 96.2%</p>
+                  </ion-text>
+                </ion-item>
+                <ion-item>
+                  <ion-label>MC/DC</ion-label>
+                  <ion-text color="warning">
+                    <p>(58/74) 69.8%</p>
+                  </ion-text>
+                </ion-item>
+              </ion-list>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-toolbar>
+      <ion-toolbar>
+        <ion-segment (ionChange)="segmentChanged($event)" [(ngModel)]="active_source_viewer_segment">
+          <ion-segment-button value="overview">
+            <ion-label>Overview</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="checkpoint">
+            <ion-label>Checkpoint</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="evaluation">
+            <ion-label>Evaluation</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+        <ion-progress-bar type="indeterminate"></ion-progress-bar>
+      </ion-toolbar>
+    </ng-container>
+    <ng-container *ngIf="!dataStore.file_loaded">
+      <ion-toolbar></ion-toolbar>
+      <ion-toolbar>
+        <ion-title size="large" class="ion-text-center">
+          Nothing to show 😅
+        </ion-title>
+      </ion-toolbar>
+      <ion-toolbar></ion-toolbar>
+    </ng-container>
   </ion-header>
 
-  <div class="scroll_container ion-padding">
+  <div class="scroll_container ion-padding" *ngIf="dataStore.file_loaded">
     <h1>Source code listing</h1>
     <div class="source_code_container">
       <div class="line_numbers">

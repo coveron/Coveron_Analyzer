@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, ipcMain } = require('electron')
+const { app, BrowserWindow, Menu, ipcMain, ipcRenderer } = require('electron')
 const isDevMode = require('electron-is-dev')
 const { CapacitorSplashScreen, configCapacitor } = require('@capacitor/electron')
 
@@ -99,12 +99,23 @@ app.on('activate', function () {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
-    //createWindow()
+    createWindow()
   }
 })
 
 // Define any IPC or other custom functionality below here
 const { AnalyzerMain } = require("../dist/out-tsc/analyzer/AnalyzerMain");
 
-let analyzer_main = new AnalyzerMain("D:\\Arbeit\\Coveron_Instrumenter\\test_code.cid", null)
+let analyzer_main = null;
 
+ipcMain.on('load_report', function (event, args) {
+  console.log("Loading report from " + args['filename']);
+  mainWindow.webContents.send('report_opened');
+  analyzer_main = new AnalyzerMain(args['filename'], null, mainWindow);
+});
+
+ipcMain.on('close_report', function (event, args) {
+  console.log("Closing report.");
+  analyzer_main = null;
+  mainWindow.webContents.send('report_closed');
+});

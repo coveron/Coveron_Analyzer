@@ -4,6 +4,8 @@ import { Platform, MenuController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { ElectronService } from 'ngx-electron';
+import { DataStoreService } from './data-store.service';
+import { BackendErrorNotifierService } from './backend-error-notifier.service';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +22,9 @@ export class AppComponent {
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     private electronSvc: ElectronService,
-    private menuCtrl: MenuController
+    private menuCtrl: MenuController,
+    private dataStore: DataStoreService,
+    private backendErrorNotifier: BackendErrorNotifierService
   ) {
     this.initializeApp();
 
@@ -54,5 +58,26 @@ export class AppComponent {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
     });
+  }
+
+  openFile() {
+    document.getElementById("file-opener").click();
+  }
+
+  openFileHandler() {
+    let files = (<HTMLInputElement>document.getElementById("file-opener")).files;
+    if (files.length == 1) {
+      let filename = files[0].path;
+
+      console.log(filename);
+
+      this.electronSvc.ipcRenderer.send("load_report", { filename: filename });
+
+      (<HTMLInputElement>document.getElementById("file-opener")).value = "";
+    }
+  }
+
+  closeFile() {
+    this.electronSvc.ipcRenderer.send("close_report", null);
   }
 }
