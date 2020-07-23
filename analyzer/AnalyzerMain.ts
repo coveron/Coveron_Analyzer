@@ -1,5 +1,10 @@
+import { readFile } from "fs";
+import { runInThisContext } from 'vm';
+
 const pako = require('pako');
 const { readFileSync, writeFile } = require("fs");
+const atob = require("atob");
+const btoa = require("btoa");
 
 const { CRIParser } = require("./CRIParser");
 const { FunctionCovAnalyzer } = require("./FunctionCovAnalyzer");
@@ -36,8 +41,34 @@ class AnalyzerMain {
                     this.mainWindow.webContents.send("report_closed");
                     return;
                 }
+            }
+
+            // send source code filename to frontend
+            let source_file_path = this.cid_data['source_code_path'].replace(/\\\\/g, "\\").replace(/\\/g, "/")
+            let source_file_name = source_file_path.split("/").pop();
+            this.mainWindow.webContents.send("report_info_source_file_name", { source_file_name: source_file_name });
+
+            // check if source file is readable
+            let source_file_content = null;
+            try {
+                source_file_content = readFileSync(source_file_path);
+            } catch {
 
             }
+            if (source_file_content != null) {
+                this.mainWindow.webContents.send("report_info_original_source_file_found", { original_source_file_found: true });
+                console.log("Stored: " + atob(this.cid_data['source_code_base64']));
+                console.log("Loaded: " + source_file_content);
+                if (atob(this.cid_data['source_code_base64']).localeCompare(source_file_content) == 0) {
+                    this.mainWindow.webContents.send("report_info_current_version_tested", { current_version_tested: true });
+                } else {
+                    this.mainWindow.webContents.send("report_info_current_version_tested", { current_version_tested: false });
+                }
+            } else {
+                this.mainWindow.webContents.send("report_info_original_source_file_found", { original_source_file_found: false });
+                this.mainWindow.webContents.send("report_info_current_version_tested", { current_version_tested: false });
+            }
+
         } else {
             throw new Error("CID file must be given");
         }
@@ -85,6 +116,8 @@ class AnalyzerMain {
         // start mcdc coverage analysis
         let mcdc_cov_analyzer = new MCDCCovAnalyzer(this.cid_data);
         mcdc_cov_analyzer.start_parsing();
+
+        this.mainWindow.webContents.send("report_info_cid_data", { cid_data: this.cid_data });
 
         writeFile("measured_output.json", JSON.stringify(this.cid_data, undefined, 4), function (err) { })
     }
