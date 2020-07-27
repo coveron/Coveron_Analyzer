@@ -1,11 +1,13 @@
-const { app, BrowserWindow, Menu, ipcMain, ipcRenderer } = require('electron')
+const { app, BrowserWindow, Menu, ipcMain, ipcRenderer, dialog } = require('electron')
 const isDevMode = require('electron-is-dev')
 const { CapacitorSplashScreen, configCapacitor } = require('@capacitor/electron')
 
 const os = require('os')
 const path = require('path')
+const { create: xmlbuilder } = require('xmlbuilder2')
 const electron = require('@capacitor/electron')
 const { platform } = require('process')
+const fs = require('fs')
 
 // Place holders for our windows so they don't get garbage collected.
 let mainWindow = null
@@ -105,6 +107,8 @@ app.on('activate', function () {
 
 // Define any IPC or other custom functionality below here
 const { AnalyzerMain } = require("../dist/out-tsc/analyzer/AnalyzerMain");
+const { fstat } = require('fs')
+// const { AnalyzerMain } = require("../AnalyzerMain");
 
 let analyzer_main = null;
 
@@ -118,4 +122,92 @@ ipcMain.on('close_report', function (event, args) {
   console.log("Closing report.");
   analyzer_main = null;
   mainWindow.webContents.send('report_closed');
+});
+
+ipcMain.on('export_xml', function (event, args) {
+  console.log("Exporting report to XML.");
+  let coverage_data = {
+    "coveron_report": {
+      "file": {
+        "filename": analyzer_main.cid_data['source_code_path'],
+        "source_code_hash": analyzer_main.cid_data['source_code_hash'],
+        "execution_count": analyzer_main.cid_data['recorded_executions'],
+        "coverage": {
+          "function": {
+            "all_count": analyzer_main.cid_data['code_data']['executed_functions'] + analyzer_main.cid_data['code_data']['unexecuted_functions'],
+            "executed": analyzer_main.cid_data['code_data']['executed_functions'],
+            "coverage": (analyzer_main.cid_data['code_data']['executed_functions'] / (analyzer_main.cid_data['code_data']['executed_functions'] + analyzer_main.cid_data['code_data']['unexecuted_functions']))
+          },
+          "statement": {
+            "all_count": analyzer_main.cid_data['code_data']['executed_statements'] + analyzer_main.cid_data['code_data']['unexecuted_statements'],
+            "executed": analyzer_main.cid_data['code_data']['executed_statements'],
+            "coverage": (analyzer_main.cid_data['code_data']['executed_statements'] / (analyzer_main.cid_data['code_data']['executed_statements'] + analyzer_main.cid_data['code_data']['unexecuted_statements']))
+          },
+          "branch": {
+            "all_count": analyzer_main.cid_data['code_data']['taken_branches'] + analyzer_main.cid_data['code_data']['nottaken_branches'],
+            "taken": analyzer_main.cid_data['code_data']['taken_branches'],
+            "coverage": (analyzer_main.cid_data['code_data']['taken_branches'] / (analyzer_main.cid_data['code_data']['taken_branches'] + analyzer_main.cid_data['code_data']['nottaken_branches'])),
+          },
+          "mcdc": {
+            "all_count": analyzer_main.cid_data['code_data']['evaluated_mcdc'] + analyzer_main.cid_data['code_data']['notevaluated_mcdc'],
+            "evaluated": analyzer_main.cid_data['code_data']['evaluated_mcdc'],
+            "coverage": (analyzer_main.cid_data['code_data']['evaluated_mcdc'] / (analyzer_main.cid_data['code_data']['evaluated_mcdc'] + analyzer_main.cid_data['code_data']['notevaluated_mcdc']))
+          }
+        }
+      }
+    }
+  }
+  let xml_data = xmlbuilder(coverage_data).end({ prettyPrint: true });
+  let output_filepath = dialog.showSaveDialogSync({ title: "Store XML report", filters: [{ name: "XML file", extensions: ["xml"] }], defaultPath: "coverage_output.xml" });
+  try {
+    fs.writeFileSync(output_filepath, xml_data);
+  } catch {
+    mainWindow.webContents.send('error_xml_export_fail');
+  }
+});
+
+ipcMain.on('export_json', function (event, args) {
+  console.log("Exporting report to JSON.");
+  let coverage_data = {
+    "coveron_report": {
+      "file": {
+        "filename": analyzer_main.cid_data['source_code_path'],
+        "source_code_hash": analyzer_main.cid_data['source_code_hash'],
+        "execution_count": analyzer_main.cid_data['recorded_executions'],
+        "coverage": {
+          "function": {
+            "all_count": analyzer_main.cid_data['code_data']['executed_functions'] + analyzer_main.cid_data['code_data']['unexecuted_functions'],
+            "executed": analyzer_main.cid_data['code_data']['executed_functions'],
+            "coverage": (analyzer_main.cid_data['code_data']['executed_functions'] / (analyzer_main.cid_data['code_data']['executed_functions'] + analyzer_main.cid_data['code_data']['unexecuted_functions']))
+          },
+          "statement": {
+            "all_count": analyzer_main.cid_data['code_data']['executed_statements'] + analyzer_main.cid_data['code_data']['unexecuted_statements'],
+            "executed": analyzer_main.cid_data['code_data']['executed_statements'],
+            "coverage": (analyzer_main.cid_data['code_data']['executed_statements'] / (analyzer_main.cid_data['code_data']['executed_statements'] + analyzer_main.cid_data['code_data']['unexecuted_statements']))
+          },
+          "branch": {
+            "all_count": analyzer_main.cid_data['code_data']['taken_branches'] + analyzer_main.cid_data['code_data']['nottaken_branches'],
+            "taken": analyzer_main.cid_data['code_data']['taken_branches'],
+            "coverage": (analyzer_main.cid_data['code_data']['taken_branches'] / (analyzer_main.cid_data['code_data']['taken_branches'] + analyzer_main.cid_data['code_data']['nottaken_branches'])),
+          },
+          "mcdc": {
+            "all_count": analyzer_main.cid_data['code_data']['evaluated_mcdc'] + analyzer_main.cid_data['code_data']['notevaluated_mcdc'],
+            "evaluated": analyzer_main.cid_data['code_data']['evaluated_mcdc'],
+            "coverage": (analyzer_main.cid_data['code_data']['evaluated_mcdc'] / (analyzer_main.cid_data['code_data']['evaluated_mcdc'] + analyzer_main.cid_data['code_data']['notevaluated_mcdc']))
+          }
+        }
+      }
+    }
+  }
+  let json_data = JSON.stringify(coverage_data, null, 2);
+  let output_filepath = dialog.showSaveDialogSync({ title: "Store JSON report", filters: [{ name: "JSON file", extensions: ["json"] }], defaultPath: "coverage_output.json" });
+  try {
+    fs.writeFileSync(output_filepath, json_data);
+  } catch {
+    mainWindow.webContents.send('error_json_export_fail');
+  }
+});
+
+ipcMain.on('export_csv', function (event, args) {
+  console.log("Exporting report to CSV.");
 });

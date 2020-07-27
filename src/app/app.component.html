@@ -41,7 +41,7 @@
             Open file
           </ion-item>
           <input type="file" style="display: none;" id="file-opener" accept=".cid" (change)="openFileHandler()" />
-          <ion-item button detail="false" (click)="closeFile()">
+          <ion-item button detail="false" (click)="closeFile()" [disabled]="!dataStore.file_loaded">
             <ion-icon name="close-circle-outline" color="primary"></ion-icon>
             Close report
           </ion-item>
@@ -51,11 +51,15 @@
           <ion-list-divider>
             Export results
           </ion-list-divider>
-          <ion-item button detail="false" (click)="makeXMLExport()">
+          <ion-item button detail="false" (click)="exportXML()" [disabled]="!dataStore.file_loaded">
             <ion-icon name="code-working-outline" color="primary"></ion-icon>
             XML export
           </ion-item>
-          <ion-item button detail="false" (click)="makeCSVExport()">
+          <ion-item button detail="false" (click)="exportJSON()" [disabled]="!dataStore.file_loaded">
+            <ion-icon name="code-working-outline" color="primary"></ion-icon>
+            JSON export
+          </ion-item>
+          <ion-item button detail="false" (click)="exportCSV()" [disabled]="!dataStore.file_loaded">
             <ion-icon name="apps-outline" color="primary"></ion-icon>
             CSV export
           </ion-item>
@@ -68,6 +72,10 @@
           <ion-item button detail="false" (click)="openGitHub()">
             <ion-icon name="logo-github" color="primary"></ion-icon>
             Visit on GitHub
+          </ion-item>
+          <ion-item button detail="false" (click)="openWebsite()">
+            <ion-icon name="globe-outline" color="primary"></ion-icon>
+            Visit Website
           </ion-item>
           <!--<ion-item button detail="false" (click)="openDonate()">
             <ion-icon name="cash-outline" color="primary"></ion-icon>

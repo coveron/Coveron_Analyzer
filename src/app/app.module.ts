@@ -9,12 +9,13 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { NgxElectronModule } from 'ngx-electron';
+import { HighlightModule } from 'ngx-highlightjs';
 
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
   imports: [BrowserModule, IonicModule.forRoot({ mode: "ios" }), AppRoutingModule,
-    NgxElectronModule],
+    NgxElectronModule, HighlightModule],
   providers: [
     StatusBar,
     SplashScreen,

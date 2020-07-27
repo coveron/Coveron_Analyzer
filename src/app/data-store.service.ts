@@ -1,6 +1,6 @@
 import { Injectable, ApplicationRef } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
-import { Observable } from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +13,9 @@ export class DataStoreService {
   original_source_file_found = null;
   current_version_tested = null;
   cid_data = null;
+
+  public cid_data_changed = new Subject<object>();
+
 
   constructor(private electronSvc: ElectronService, private app: ApplicationRef) {
     let context = this;
@@ -50,6 +53,7 @@ export class DataStoreService {
     this.electronSvc.ipcRenderer.on("report_info_cid_data", function (event, args) {
       console.log("Received CID data");
       context.cid_data = args['cid_data'];
+      context.cid_data_changed.next();
       app.tick();
     });
   }

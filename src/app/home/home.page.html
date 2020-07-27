@@ -147,13 +147,14 @@
     <h1>Source code listing</h1>
     <div class="source_code_container">
       <div class="line_numbers">
-        <ng-template ngFor let-code_line let-i="index" [ngForOf]="get_source_code()">
+        <ng-template ngFor let-code_line let-i="index" [ngForOf]="source_code">
           {{i + 1}}<br>
         </ng-template>
       </div>
       <div class="code_lines">
-        <ng-template ngFor let-code_line [ngForOf]="get_source_code()">
-          <div class="code_markup_line">{{code_line}}</div>
+        <ng-template ngFor let-code_line [ngForOf]="source_code">
+          <div class="code_markup_line" [innerHTML]="code_line">
+          </div>
         </ng-template>
       </div>
     </div>

@@ -3,9 +3,11 @@ export { };
 exports.FunctionCovAnalyzer = class FunctionCovAnalyzer {
 
     cid_data: object;
+    mainWindow;
 
-    constructor(cid_data: object) {
+    constructor(cid_data: object, mainWindow) {
         this.cid_data = cid_data;
+        this.mainWindow = mainWindow
     }
 
     start_parsing() {
@@ -18,9 +20,13 @@ exports.FunctionCovAnalyzer = class FunctionCovAnalyzer {
             if ('executions' in functionData) {
                 this.cid_data['code_data']['executed_functions'] =
                     (this.cid_data['code_data']['executed_functions'] + 1) || 1;
+                this.cid_data['code_data']['unexecuted_functions'] =
+                    this.cid_data['code_data']['unexecuted_functions'] || 0;
             } else {
                 this.cid_data['code_data']['unexecuted_functions'] =
                     (this.cid_data['code_data']['unexecuted_functions'] + 1) || 1;
+                this.cid_data['code_data']['executed_functions'] =
+                    this.cid_data['code_data']['executed_functions'] || 0;
             }
         });
     }

@@ -48,6 +48,8 @@ ion-content {
         overflow-x: auto;
         overflow-y: scroll;
         padding-top: 242px;
+        padding-left: 10px;
+        padding-right: 10px;
 
         &::-webkit-scrollbar {
             width: 10px;
@@ -139,42 +141,23 @@ ion-grid.file_report_info {
 
 .source_code_container {
     font-family: "Source Code Pro";
-    min-width: calc(100% - 10px);
+    font-size: 20px;
+    min-width: calc(100% - 30px);
     background-color: rgb(255, 255, 255);
-    margin: 5px 10px;
-    position: relative;
+    margin: 10px 5px;
+    position: absolute;
     border: 0.55px solid rgb(200, 200, 200);
     border-radius: 5px;
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.25);
     white-space: nowrap;
-
-    pre {
-        margin: 0px;
-        padding: 0px;
-        counter-reset: line;
-        font-family: "Source Code Pro";
-        font-size: 14px;
-        line-height: 0.8;
-        overflow: hidden;
-        white-space: pre-line;
-    }
-    code {
-        counter-increment: line;
-    }
-    code:before {
-        content: counter(line);
-        padding-left: 10px;
-        width: 60px;
-        background-color: rgba(255, 255, 255, 0);
-        display: inline-block;
-        --webkit-user-select: none;
-    }
 
     div.line_numbers {
         display: inline-block;
         height: 100%;
         position: relative;
         text-align: right;
+        line-height: 20px;
+        font-size: 16px;
         top: 0px;
         left: 0px;
         min-width: 30px;
@@ -190,5 +173,22 @@ ion-grid.file_report_info {
         position: relative;
         margin-left: 5px;
         white-space: pre;
+
+        div.code_markup_line {
+            content: "";
+            height: 20px;
+            font-size: 16px;
+
+            pre {
+                margin: 0px;
+                padding: 0px;
+
+                code {
+                    margin: 0px;
+                    padding: 0px;
+                    font-weight: 300;
+                }
+            }
+        }
     }
 }

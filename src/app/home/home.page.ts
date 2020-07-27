@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
 import { MenuController } from '@ionic/angular';
 import { DataStoreService } from '../data-store.service';
+import { HighlightModule, HighlightJS } from 'ngx-highlightjs';
+
 
 @Component({
   selector: 'app-home',
@@ -10,10 +12,22 @@ import { DataStoreService } from '../data-store.service';
 })
 export class HomePage {
 
+  // store for source code
+  source_code = []
+
+  overview_markers = "";
+  checkpoint_markers = "";
+  evaluation_markers = "";
+
+
   // selector for active segment
   active_source_viewer_segment = "overview";
 
-  constructor(public dataStore: DataStoreService) {
+  constructor(public dataStore: DataStoreService, public highlighter: HighlightJS) {
+    this.dataStore.cid_data_changed.subscribe((val) => {
+      // trigger source code update
+      this.get_source_code();
+    });
   }
 
   segment_changed(ev) {
@@ -106,12 +120,31 @@ export class HomePage {
   }
 
 
-  get_source_code() {
+
+  async get_source_code() {
     if (this.dataStore.cid_data != null) {
-      return atob(this.dataStore.cid_data.source_code_base64).split("\n");
+      let context = this;
+      this.highlighter.highlight("C++", atob(this.dataStore.cid_data.source_code_base64), true).subscribe((val) => {
+        context.source_code = val.value.split("\n");
+      });
     } else {
-      return [];
+      this.source_code = [];
     }
+  }
+
+  async createOverviewMarkers() {
+    // create all markers with custom placed divs for each (multiple lines get multiple divs).
+    // Then set the resulting string to the overview_markers var
+  }
+
+  async createCheckpointMarkers() {
+    // create all markers with custom placed divs for each (multiple lines get multiple divs).
+    // Then set the resulting string to the checkpoint_markers var
+  }
+
+  async createEvaluationMarkers() {
+    // create all markers with custom placed divs for each (multiple lines get multiple divs).
+    // Then set the resulting string to the evaluation_markers var
   }
 
 

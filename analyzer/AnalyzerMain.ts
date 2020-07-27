@@ -18,7 +18,7 @@ class AnalyzerMain {
     cid_file_content: string = null;
     cri_file_content: Uint8Array = null;
 
-    cid_data: object;
+    public cid_data: object;
 
     mainWindow;
 
@@ -57,8 +57,6 @@ class AnalyzerMain {
             }
             if (source_file_content != null) {
                 this.mainWindow.webContents.send("report_info_original_source_file_found", { original_source_file_found: true });
-                console.log("Stored: " + atob(this.cid_data['source_code_base64']));
-                console.log("Loaded: " + source_file_content);
                 if (atob(this.cid_data['source_code_base64']).localeCompare(source_file_content) == 0) {
                     this.mainWindow.webContents.send("report_info_current_version_tested", { current_version_tested: true });
                 } else {
@@ -98,19 +96,19 @@ class AnalyzerMain {
         }
 
         // start function coverage analysis
-        let function_cov_analyzer = new FunctionCovAnalyzer(this.cid_data);
+        let function_cov_analyzer = new FunctionCovAnalyzer(this.cid_data, this.mainWindow);
         function_cov_analyzer.start_parsing();
 
         // start statement coverage analysis
-        let statement_cov_analyzer = new StatementCovAnalyzer(this.cid_data);
+        let statement_cov_analyzer = new StatementCovAnalyzer(this.cid_data, this.mainWindow);
         statement_cov_analyzer.start_parsing();
 
         // start decision coverage analysis
-        let decision_cov_analyzer = new DecisionCovAnalyzer(this.cid_data);
+        let decision_cov_analyzer = new DecisionCovAnalyzer(this.cid_data, this.mainWindow);
         decision_cov_analyzer.start_parsing();
 
         // start branch coverage analysis
-        let branch_cov_analyzer = new BranchCovAnalyzer(this.cid_data);
+        let branch_cov_analyzer = new BranchCovAnalyzer(this.cid_data, this.mainWindow);
         branch_cov_analyzer.start_parsing();
 
         // start mcdc coverage analysis
@@ -119,7 +117,7 @@ class AnalyzerMain {
 
         this.mainWindow.webContents.send("report_info_cid_data", { cid_data: this.cid_data });
 
-        writeFile("measured_output.json", JSON.stringify(this.cid_data, undefined, 4), function (err) { })
+        // writeFile("measured_output.json", JSON.stringify(this.cid_data, undefined, 4), function (err) { })
     }
 
     process_cri_file(input_file) {

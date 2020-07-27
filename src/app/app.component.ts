@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Plugins } from '@capacitor/core';
 
 import { Platform, MenuController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -79,5 +80,25 @@ export class AppComponent {
 
   closeFile() {
     this.electronSvc.ipcRenderer.send("close_report", null);
+  }
+
+  openGitHub() {
+    this.electronSvc.shell.openExternal("https://github.com/coveron");
+  }
+
+  openWebsite() {
+    this.electronSvc.shell.openExternal("https://coveron.github.io");
+  }
+
+  exportXML() {
+    this.electronSvc.ipcRenderer.send("export_xml");
+  }
+
+  exportJSON() {
+    this.electronSvc.ipcRenderer.send("export_json");
+  }
+
+  exportCSV() {
+    this.electronSvc.ipcRenderer.send("export_csv");
   }
 }

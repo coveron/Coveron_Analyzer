@@ -27,6 +27,20 @@ export class BackendErrorNotifierService {
       context.error_cri_not_openable();
     });
 
+    this.electronSvc.ipcRenderer.on("error_xml_export_fail", function (event, args) {
+      console.log("Backend error: XML export failed");
+      context.error_xml_export_fail();
+    });
+
+    this.electronSvc.ipcRenderer.on("error_json_export_fail", function (event, args) {
+      console.log("Backend error: JSON export failed");
+      context.error_json_export_fail();
+    });
+
+    this.electronSvc.ipcRenderer.on("error_csv_export_fail", function (event, args) {
+      console.log("Backend error: CSV export failed");
+      context.error_csv_export_fail();
+    });
   }
 
   async error_cri_not_fitting_to_cid() {
@@ -53,6 +67,36 @@ export class BackendErrorNotifierService {
     const alert = await this.alertCtrl.create({
       header: 'CRI file couldn\'t be opened',
       message: 'Coveron couldn\'t open or find the runtime information file.',
+      buttons: ['Cancel']
+    });
+
+    await alert.present();
+  }
+
+  async error_xml_export_fail() {
+    const alert = await this.alertCtrl.create({
+      header: 'XML export couldn\'t be created',
+      message: 'Coveron couldn\'t create the XML output. Check, if you have sufficient permissions to modify the file.',
+      buttons: ['Cancel']
+    });
+
+    await alert.present();
+  }
+
+  async error_json_export_fail() {
+    const alert = await this.alertCtrl.create({
+      header: 'JSON export couldn\'t be created',
+      message: 'Coveron couldn\'t create the JSON output. Check, if you have sufficient permissions to modify the file.',
+      buttons: ['Cancel']
+    });
+
+    await alert.present();
+  }
+
+  async error_csv_export_fail() {
+    const alert = await this.alertCtrl.create({
+      header: 'CSV export couldn\'t be created',
+      message: 'Coveron couldn\'t create the CSV output. Check, if you have sufficient permissions to modify the file.',
       buttons: ['Cancel']
     });
 

@@ -5,9 +5,11 @@ const { MarkerType, MarkerResult } = require("./Tools");
 exports.StatementCovAnalyzer = class StatementCovAnalyzer {
 
     cid_data: object;
+    mainWindow;
 
-    constructor(cid_data: object) {
+    constructor(cid_data: object, mainWindow) {
         this.cid_data = cid_data;
+        this.mainWindow = mainWindow
     }
 
     start_parsing() {
