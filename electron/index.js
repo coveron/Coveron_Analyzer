@@ -210,4 +210,38 @@ ipcMain.on('export_json', function (event, args) {
 
 ipcMain.on('export_csv', function (event, args) {
   console.log("Exporting report to CSV.");
+  let coverage_data = {
+    "filename": analyzer_main.cid_data['source_code_path'],
+    "execution_count": analyzer_main.cid_data['recorded_executions'],
+    "function_all_count": analyzer_main.cid_data['code_data']['executed_functions'] + analyzer_main.cid_data['code_data']['unexecuted_functions'],
+    "function_executed": analyzer_main.cid_data['code_data']['executed_functions'],
+    "function_coverage": (analyzer_main.cid_data['code_data']['executed_functions'] / (analyzer_main.cid_data['code_data']['executed_functions'] + analyzer_main.cid_data['code_data']['unexecuted_functions'])),
+    "statement_all_count": analyzer_main.cid_data['code_data']['executed_statements'] + analyzer_main.cid_data['code_data']['unexecuted_statements'],
+    "statement_executed": analyzer_main.cid_data['code_data']['executed_statements'],
+    "statement_coverage": (analyzer_main.cid_data['code_data']['executed_statements'] / (analyzer_main.cid_data['code_data']['executed_statements'] + analyzer_main.cid_data['code_data']['unexecuted_statements'])),
+    "branch_all_count": analyzer_main.cid_data['code_data']['taken_branches'] + analyzer_main.cid_data['code_data']['nottaken_branches'],
+    "branch_taken": analyzer_main.cid_data['code_data']['taken_branches'],
+    "branch_coverage": (analyzer_main.cid_data['code_data']['taken_branches'] / (analyzer_main.cid_data['code_data']['taken_branches'] + analyzer_main.cid_data['code_data']['nottaken_branches'])),
+    "mcdc_all_count": analyzer_main.cid_data['code_data']['evaluated_mcdc'] + analyzer_main.cid_data['code_data']['notevaluated_mcdc'],
+    "mcdc_evaluated": analyzer_main.cid_data['code_data']['evaluated_mcdc'],
+    "mcdc_coverage": (analyzer_main.cid_data['code_data']['evaluated_mcdc'] / (analyzer_main.cid_data['code_data']['evaluated_mcdc'] + analyzer_main.cid_data['code_data']['notevaluated_mcdc'])),
+  }
+
+  let line1 = ""
+  let line2 = ""
+
+  Object.keys(coverage_data).forEach((key, value) => {
+    line1 += "\"" + key + "\","
+    line2 += "\"" + coverage_data[key] + "\","
+  });
+
+  line1 = line1.slice(0, line1.length - 1);
+  line2 = line2.slice(0, line2.length - 1);
+
+  let output_filepath = dialog.showSaveDialogSync({ title: "Store CSV report", filters: [{ name: "CSV file", extensions: ["csv"] }], defaultPath: "coverage_output.csv" });
+  try {
+    fs.writeFileSync(output_filepath, line1 + "\n" + line2);
+  } catch {
+    mainWindow.webContents.send('error_csv_export_fail');
+  }
 });
