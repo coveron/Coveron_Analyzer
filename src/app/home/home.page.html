@@ -156,6 +156,19 @@
           <div class="code_markup_line" [innerHTML]="code_line">
           </div>
         </ng-template>
+        <div class="code_markup overview_markup statement" *ngFor="let markup of overview_statement_markups"
+          [style.top]="markup.top" [style.left]="markup.left" [style.width]="markup.width"
+          [class.executed]="markup.executed == true" [class.not_executed]="markup.executed == false"
+          [hidden]="active_source_viewer_segment != 'overview'">
+        </div>
+
+        <div class="code_markup overview_markup function" *ngFor="let markup of overview_function_markups"
+          [style.top]="markup.top" [style.height]="markup.height" [class.executed]="markup.executed == true"
+          [class.not_executed]="markup.executed == false" [hidden]="active_source_viewer_segment != 'overview'">
+          <div class="code_markup overview_markup function function_details" onclick="console.log('hello')">
+            <ion-icon name="information"></ion-icon>
+          </div>
+        </div>
       </div>
     </div>
   </div>

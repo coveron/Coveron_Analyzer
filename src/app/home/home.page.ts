@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ApplicationRef } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
 import { MenuController } from '@ionic/angular';
 import { DataStoreService } from '../data-store.service';
@@ -13,17 +13,16 @@ import { HighlightModule, HighlightJS } from 'ngx-highlightjs';
 export class HomePage {
 
   // store for source code
+  raw_source_code = []
   source_code = []
-
-  overview_markers = "";
-  checkpoint_markers = "";
-  evaluation_markers = "";
+  overview_statement_markups = []
+  overview_function_markups = []
 
 
   // selector for active segment
   active_source_viewer_segment = "overview";
 
-  constructor(public dataStore: DataStoreService, public highlighter: HighlightJS) {
+  constructor(public dataStore: DataStoreService, public highlighter: HighlightJS, public appRef: ApplicationRef) {
     this.dataStore.cid_data_changed.subscribe((val) => {
       // trigger source code update
       this.get_source_code();
@@ -31,7 +30,7 @@ export class HomePage {
   }
 
   segment_changed(ev) {
-    // console.log(this.active_source_viewer_segment);
+    this.appRef.tick();
   }
 
   get_percentage_color(percentage: number) {
@@ -123,28 +122,71 @@ export class HomePage {
 
   async get_source_code() {
     if (this.dataStore.cid_data != null) {
+      this.raw_source_code = atob(this.dataStore.cid_data.source_code_base64).split('\n');
       let context = this;
       this.highlighter.highlight("C++", atob(this.dataStore.cid_data.source_code_base64), true).subscribe((val) => {
         context.source_code = val.value.split("\n");
       });
     } else {
+      this.raw_source_code = [];
       this.source_code = [];
     }
+
+    this.createOverviewMarkups();
+    this.createCheckpointMarkups();
+    this.createEvaluationMarkups();
   }
 
-  async createOverviewMarkers() {
+  createOverviewMarkups() {
     // create all markers with custom placed divs for each (multiple lines get multiple divs).
-    // Then set the resulting string to the overview_markers var
+    let context = this;
+
+    // create the statement markups
+    this.dataStore.cid_data['code_data']['statements'].forEach(statement => {
+      for (let active_line = statement['code_section']['start_line']; active_line <= statement['code_section']['end_line']; active_line++) {
+        let start_char = context.raw_source_code[active_line - 1].indexOf(context.raw_source_code[active_line - 1].trim(), 0) + 1;
+        let length = context.raw_source_code[active_line - 1].trim().length;
+
+        // set start column of first line
+        if (active_line == statement['code_section']['start_line']) {
+          start_char = statement['code_section']['start_column'];
+        }
+
+        // set end column of last line
+        if (active_line == statement['code_section']['end_line']) {
+          length = statement['code_section']['end_column'] - start_char;
+        }
+
+        context.overview_statement_markups.push(
+          {
+            top: (20 * (active_line - 1)) + "px",
+            left: (start_char - 1) + "ch",
+            width: length + "ch",
+            executed: (statement.executions > 0 || false) ? true : false
+          }
+        )
+      }
+    });
+
+    // create the function markups
+    this.dataStore.cid_data['code_data']['functions'].forEach(function_data => {
+      context.overview_function_markups.push(
+        {
+          top: (20 * (function_data.header_code_section.start_line - 1)) + "px",
+          height: (20 * (function_data.inner_code_section.end_line - function_data.header_code_section.start_line + 1)) + "px",
+          executed: (function_data.executions > 0 || false) ? true : false,
+          function_id: function_data.function_id
+        }
+      )
+    });
   }
 
-  async createCheckpointMarkers() {
-    // create all markers with custom placed divs for each (multiple lines get multiple divs).
-    // Then set the resulting string to the checkpoint_markers var
+  createCheckpointMarkups() {
+    // create all markups with custom placed divs for each (multiple lines get multiple divs).
   }
 
-  async createEvaluationMarkers() {
-    // create all markers with custom placed divs for each (multiple lines get multiple divs).
-    // Then set the resulting string to the evaluation_markers var
+  createEvaluationMarkups() {
+    // create all markups with custom placed divs for each (multiple lines get multiple divs).
   }
 
 

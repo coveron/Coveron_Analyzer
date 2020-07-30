@@ -191,4 +191,74 @@ ion-grid.file_report_info {
             }
         }
     }
+
+    div.code_markup {
+        position: absolute;    
+        border-radius: 4px;
+        z-index: 20;
+        font-size: 16px;
+    }
+
+    div.overview_markup {
+        &.statement {
+            height: 20px;
+            pointer-events: none;
+            border-radius: 4px;
+            &.not_executed {
+                background-color: rgba(255, 50, 30, 0.3);
+            }
+
+            &.executed {
+                background: rgba(00, 255, 50, 0.3);
+            }
+        }
+
+        &.function {
+            left: 0px;
+            width: 50px;
+            border-radius: 10px;
+            pointer-events: none;
+            &.not_executed {
+                background-image: linear-gradient(to right,rgba(255, 50, 30, 0.3) 0%, rgba(255, 50, 30, 0) 50%);
+            }
+
+            &.executed {
+                background-image: linear-gradient(to right,rgba(0, 255, 50, 0.3) 0%, rgba(0, 255, 50, 0) 50%);
+            }
+
+            &.function_details {
+                height: 20px;
+                width: 30px;
+                top: -9px;
+                left: 5px;
+                border-radius:10px;
+                background-color: rgba(0, 0, 0, 0.05);
+                backdrop-filter: blur(10px);
+                color: black;
+                box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.15);
+                position: absolute;
+                transition: box-shadow 100ms ease-out, background-color 100ms ease-out;
+                pointer-events: all;
+
+                ion-icon {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 16px;
+                    height: 16px;
+                }
+
+                &:hover {
+                    box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.13);
+                    background-color: rgba(255, 255, 255, 0.1);
+                }
+
+                &:active {
+                    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.25);
+                    background-color: rgba(0, 0, 0, 0.15);
+                }
+            }
+        }
+    }
 }
