@@ -114,19 +114,6 @@
             </ion-col>
           </ion-row>
         </ion-grid>
-      </ion-toolbar>
-      <ion-toolbar>
-        <ion-segment (ionChange)="segment_changed($event)" [(ngModel)]="active_source_viewer_segment">
-          <ion-segment-button value="overview">
-            <ion-label>Overview</ion-label>
-          </ion-segment-button>
-          <ion-segment-button value="checkpoint">
-            <ion-label>Checkpoint</ion-label>
-          </ion-segment-button>
-          <ion-segment-button value="evaluation">
-            <ion-label>Evaluation</ion-label>
-          </ion-segment-button>
-        </ion-segment>
         <ion-progress-bar type="indeterminate"
           *ngIf="this.dataStore.cid_data == null || this.dataStore.current_version_tested == null || this.dataStore.file_loaded == false || this.dataStore.original_source_file_found == null || this.dataStore.source_file_name == null">
         </ion-progress-bar>
@@ -158,16 +145,27 @@
         </ng-template>
         <div class="code_markup overview_markup statement" *ngFor="let markup of overview_statement_markups"
           [style.top]="markup.top" [style.left]="markup.left" [style.width]="markup.width"
-          [class.executed]="markup.executed == true" [class.not_executed]="markup.executed == false"
-          [hidden]="active_source_viewer_segment != 'overview'">
+          [class.executed]="markup.executed == true" [class.not_executed]="markup.executed == false">
+        </div>
+
+        <div class="code_markup overview_markup evaluation" *ngFor="let markup of overview_evaluation_markups"
+          [style.top]="markup.top" [style.left]="markup.left" [style.width]="markup.width"
+          [class.both_evaluated]="markup.evaluated_branches == 2" [class.one_evaluated]="markup.evaluated_branches == 1"
+          [class.none_evaluated]="markup.evaluated_branches == 0">
+        </div>
+
+        <div class="code_markup overview_markup mcdc" *ngFor="let markup of overview_mcdc_markups"
+          [style.top]="markup.top" [style.left]="markup.left" [style.width]="markup.width"
+          [class.not_evaluated]="markup.mcdc_evaluated == false" [class.evaluated]="markup.mcdc_evaluated == true">
         </div>
 
         <div class="code_markup overview_markup function" *ngFor="let markup of overview_function_markups"
           [style.top]="markup.top" [style.height]="markup.height" [class.executed]="markup.executed == true"
-          [class.not_executed]="markup.executed == false" [hidden]="active_source_viewer_segment != 'overview'">
-          <div class="code_markup overview_markup function function_details" onclick="console.log('hello')">
+          [class.not_executed]="markup.executed == false">
+          <!--<div class="code_markup overview_markup function function_details"
+            (click)="showFunctionCoverage(markup.function_id)">
             <ion-icon name="information"></ion-icon>
-          </div>
+          </div>-->
         </div>
       </div>
     </div>

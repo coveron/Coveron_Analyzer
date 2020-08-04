@@ -1,6 +1,6 @@
 import { Component, ApplicationRef } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
-import { MenuController } from '@ionic/angular';
+import { MenuController, AlertController } from '@ionic/angular';
 import { DataStoreService } from '../data-store.service';
 import { HighlightModule, HighlightJS } from 'ngx-highlightjs';
 
@@ -17,20 +17,15 @@ export class HomePage {
   source_code = []
   overview_statement_markups = []
   overview_function_markups = []
+  overview_evaluation_markups = []
+  overview_mcdc_markups = []
 
 
-  // selector for active segment
-  active_source_viewer_segment = "overview";
-
-  constructor(public dataStore: DataStoreService, public highlighter: HighlightJS, public appRef: ApplicationRef) {
+  constructor(public dataStore: DataStoreService, public highlighter: HighlightJS, public alertCtrl: AlertController) {
     this.dataStore.cid_data_changed.subscribe((val) => {
       // trigger source code update
       this.get_source_code();
     });
-  }
-
-  segment_changed(ev) {
-    this.appRef.tick();
   }
 
   get_percentage_color(percentage: number) {
@@ -133,11 +128,15 @@ export class HomePage {
     }
 
     this.createOverviewMarkups();
-    this.createCheckpointMarkups();
-    this.createEvaluationMarkups();
   }
 
   createOverviewMarkups() {
+    // first up clear existing markers
+    this.overview_statement_markups = [];
+    this.overview_function_markups = [];
+    this.overview_evaluation_markups = [];
+    this.overview_mcdc_markups = [];
+
     // create all markers with custom placed divs for each (multiple lines get multiple divs).
     let context = this;
 
@@ -179,15 +178,267 @@ export class HomePage {
         }
       )
     });
-  }
 
-  createCheckpointMarkups() {
-    // create all markups with custom placed divs for each (multiple lines get multiple divs).
-  }
+    // create the if-branch markers
+    this.dataStore.cid_data['code_data']['if_branches'].forEach(if_branch_data => {
+      if_branch_data['branch_results'].forEach(branch_result => {
 
-  createEvaluationMarkups() {
-    // create all markups with custom placed divs for each (multiple lines get multiple divs).
-  }
+        if (branch_result['evaluation_marker_id'] == -1) {
+          return;
+        }
 
+        for (let active_line = branch_result['result_evaluation_code_section']['start_line']; active_line <= branch_result['result_evaluation_code_section']['end_line']; active_line++) {
+          let start_char = context.raw_source_code[active_line - 1].indexOf(context.raw_source_code[active_line - 1].trim(), 0) + 1;
+          let length = context.raw_source_code[active_line - 1].trim().length;
+
+          // set start column of first line
+          if (active_line == branch_result['result_evaluation_code_section']['start_line']) {
+            start_char = branch_result['result_evaluation_code_section']['start_column'];
+          }
+
+          // set end column of last line
+          if (active_line == branch_result['result_evaluation_code_section']['end_line']) {
+            length = branch_result['result_evaluation_code_section']['end_column'] - start_char;
+          }
+
+          let evaluation_count = 0;
+
+          if (branch_result['evaluations_true'] > 0) {
+            evaluation_count++;
+          }
+
+          if (branch_result['evaluations_false'] > 0) {
+            evaluation_count++;
+          }
+
+
+          context.overview_evaluation_markups.push(
+            {
+              top: (20 * (active_line - 1)) + "px",
+              left: (start_char - 1) + "ch",
+              width: length + "ch",
+              evaluated_branches: evaluation_count
+            }
+          );
+        }
+
+        // markup conditions for mcdc coverage
+        branch_result['conditions'].forEach(condition => {
+          for (let condition_active_line = condition['code_section']['start_line']; condition_active_line <= condition['code_section']['end_line']; condition_active_line++) {
+            let condition_start_char = context.raw_source_code[condition_active_line - 1].indexOf(context.raw_source_code[condition_active_line - 1].trim(), 0) + 1;
+            let condition_length = context.raw_source_code[condition_active_line - 1].trim().length;
+
+            // set start column of first line
+            if (condition_active_line == condition['code_section']['start_line']) {
+              condition_start_char = condition['code_section']['start_column'];
+            }
+
+            // set end column of last line
+            if (condition_active_line == condition['code_section']['end_line']) {
+              condition_length = condition['code_section']['end_column'] - condition_start_char;
+            }
+
+            context.overview_mcdc_markups.push(
+              {
+                top: (20 * (condition_active_line - 1)) + "px",
+                left: (condition_start_char - 1) + "ch",
+                width: condition_length + "ch",
+                mcdc_evaluated: condition['evaluated_mcdc'] || false
+              }
+            );
+          }
+        });
+      });
+    });
+
+    // create the switch-branch markers
+    this.dataStore.cid_data['code_data']['switch_branches'].forEach(switch_branch_data => {
+      switch_branch_data['cases'].forEach(case_data => {
+
+        if (case_data['evaluation_marker_id'] == -1) {
+          return;
+        }
+
+        for (let active_line = case_data['evaluation_code_section']['start_line']; active_line <= case_data['evaluation_code_section']['end_line']; active_line++) {
+          let start_char = context.raw_source_code[active_line - 1].indexOf(context.raw_source_code[active_line - 1].trim(), 0) + 1;
+          let length = context.raw_source_code[active_line - 1].trim().length;
+
+          // set start column of first line
+          if (active_line == case_data['evaluation_code_section']['start_line']) {
+            start_char = case_data['evaluation_code_section']['start_column'];
+          }
+
+          // set end column of last line
+          if (active_line == case_data['evaluation_code_section']['end_line']) {
+            length = case_data['evaluation_code_section']['end_column'] - start_char;
+          }
+
+          let evaluation_count = 0;
+
+          if (case_data['evaluations_true'] > 0) {
+            evaluation_count++;
+          }
+
+          if (case_data['evaluations_false'] > 0) {
+            evaluation_count++;
+          }
+
+
+          context.overview_evaluation_markups.push(
+            {
+              top: (20 * (active_line - 1)) + "px",
+              left: (start_char - 1) + "ch",
+              width: length + "ch",
+              evaluated_branches: (case_data['executions'] > 0) ? 2 : 0
+            }
+          );
+        }
+      });
+    });
+
+
+    // create the loop markers
+    this.dataStore.cid_data['code_data']['loops'].forEach(loop_data => {
+
+      if (loop_data['evaluation_marker_id'] == -1) {
+        return;
+      }
+
+      for (let active_line = loop_data['evaluation_code_section']['start_line']; active_line <= loop_data['evaluation_code_section']['end_line']; active_line++) {
+        let start_char = context.raw_source_code[active_line - 1].indexOf(context.raw_source_code[active_line - 1].trim(), 0) + 1;
+        let length = context.raw_source_code[active_line - 1].trim().length;
+
+        // set start column of first line
+        if (active_line == loop_data['evaluation_code_section']['start_line']) {
+          start_char = loop_data['evaluation_code_section']['start_column'];
+        }
+
+        // set end column of last line
+        if (active_line == loop_data['evaluation_code_section']['end_line']) {
+          length = loop_data['evaluation_code_section']['end_column'] - start_char;
+        }
+
+        let evaluation_count = 0;
+
+        if (loop_data['evaluations_true'] > 0) {
+          evaluation_count++;
+        }
+
+        if (loop_data['evaluations_false'] > 0) {
+          evaluation_count++;
+        }
+
+
+        context.overview_evaluation_markups.push(
+          {
+            top: (20 * (active_line - 1)) + "px",
+            left: (start_char - 1) + "ch",
+            width: length + "ch",
+            evaluated_branches: evaluation_count
+          }
+        );
+      }
+
+      // markup conditions for mcdc coverage
+      loop_data['conditions'].forEach(condition => {
+        for (let condition_active_line = condition['code_section']['start_line']; condition_active_line <= condition['code_section']['end_line']; condition_active_line++) {
+          let condition_start_char = context.raw_source_code[condition_active_line - 1].indexOf(context.raw_source_code[condition_active_line - 1].trim(), 0) + 1;
+          let condition_length = context.raw_source_code[condition_active_line - 1].trim().length;
+
+          // set start column of first line
+          if (condition_active_line == condition['code_section']['start_line']) {
+            condition_start_char = condition['code_section']['start_column'];
+          }
+
+          // set end column of last line
+          if (condition_active_line == condition['code_section']['end_line']) {
+            condition_length = condition['code_section']['end_column'] - condition_start_char;
+          }
+
+          context.overview_mcdc_markups.push(
+            {
+              top: (20 * (condition_active_line - 1)) + "px",
+              left: (condition_start_char - 1) + "ch",
+              width: condition_length + "ch",
+              mcdc_evaluated: condition['evaluated_mcdc'] || false
+            }
+          );
+        }
+      });
+    });
+
+
+    // create the ternary expression
+    this.dataStore.cid_data['code_data']['ternary_expressions'].forEach(ternary_expression_data => {
+
+      if (ternary_expression_data['evaluation_marker_id'] == -1) {
+        return;
+      }
+
+      for (let active_line = ternary_expression_data['evaluation_code_section']['start_line']; active_line <= ternary_expression_data['evaluation_code_section']['end_line']; active_line++) {
+        let start_char = context.raw_source_code[active_line - 1].indexOf(context.raw_source_code[active_line - 1].trim(), 0) + 1;
+        let length = context.raw_source_code[active_line - 1].trim().length;
+
+        // set start column of first line
+        if (active_line == ternary_expression_data['evaluation_code_section']['start_line']) {
+          start_char = ternary_expression_data['evaluation_code_section']['start_column'];
+        }
+
+        // set end column of last line
+        if (active_line == ternary_expression_data['evaluation_code_section']['end_line']) {
+          length = ternary_expression_data['evaluation_code_section']['end_column'] - start_char;
+        }
+
+        let evaluation_count = 0;
+
+        if (ternary_expression_data['evaluations_true'] > 0) {
+          evaluation_count++;
+        }
+
+        if (ternary_expression_data['evaluations_false'] > 0) {
+          evaluation_count++;
+        }
+
+
+        context.overview_evaluation_markups.push(
+          {
+            top: (20 * (active_line - 1)) + "px",
+            left: (start_char - 1) + "ch",
+            width: length + "ch",
+            evaluated_branches: evaluation_count
+          }
+        );
+      }
+
+      // markup conditions for mcdc coverage
+      ternary_expression_data['conditions'].forEach(condition => {
+        for (let condition_active_line = condition['code_section']['start_line']; condition_active_line <= condition['code_section']['end_line']; condition_active_line++) {
+          let condition_start_char = context.raw_source_code[condition_active_line - 1].indexOf(context.raw_source_code[condition_active_line - 1].trim(), 0) + 1;
+          let condition_length = context.raw_source_code[condition_active_line - 1].trim().length;
+
+          // set start column of first line
+          if (condition_active_line == condition['code_section']['start_line']) {
+            condition_start_char = condition['code_section']['start_column'];
+          }
+
+          // set end column of last line
+          if (condition_active_line == condition['code_section']['end_line']) {
+            condition_length = condition['code_section']['end_column'] - condition_start_char;
+          }
+
+          context.overview_mcdc_markups.push(
+            {
+              top: (20 * (condition_active_line - 1)) + "px",
+              left: (condition_start_char - 1) + "ch",
+              width: condition_length + "ch",
+              mcdc_evaluated: condition['evaluated_mcdc'] || false
+            }
+          );
+        }
+      });
+    });
+
+
+  }
 
 }

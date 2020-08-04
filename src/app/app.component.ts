@@ -66,6 +66,7 @@ export class AppComponent {
   }
 
   openFileHandler() {
+    this.closeFile();
     let files = (<HTMLInputElement>document.getElementById("file-opener")).files;
     if (files.length == 1) {
       let filename = files[0].path;
