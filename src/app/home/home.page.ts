@@ -102,7 +102,15 @@ export class HomePage {
     let notevaluated_mcdc = this.dataStore.cid_data.code_data.notevaluated_mcdc;
     let all_mcdc = evaluated_mcdc + notevaluated_mcdc;
 
-    return this.get_percentage_color(evaluated_mcdc / all_mcdc);
+    let executed_functions = this.dataStore.cid_data.code_data.executed_functions;
+    let unexecuted_functions = this.dataStore.cid_data.code_data.unexecuted_functions;
+    let all_functions = executed_functions + unexecuted_functions;
+
+    if ((executed_functions / all_functions) < (evaluated_mcdc / all_mcdc)) {
+      return this.get_percentage_color(executed_functions / all_functions);
+    } else {
+      return this.get_percentage_color(evaluated_mcdc / all_mcdc);
+    }
   }
 
   get_mcdc_coverage_string() {
@@ -110,7 +118,15 @@ export class HomePage {
     let notevaluated_mcdc = this.dataStore.cid_data.code_data.notevaluated_mcdc;
     let all_mcdc = evaluated_mcdc + notevaluated_mcdc;
 
-    return '(' + evaluated_mcdc + '/' + all_mcdc + ") " + (100 * evaluated_mcdc / all_mcdc).toFixed(1) + "%";
+    let executed_functions = this.dataStore.cid_data.code_data.executed_functions;
+    let unexecuted_functions = this.dataStore.cid_data.code_data.unexecuted_functions;
+    let all_functions = executed_functions + unexecuted_functions;
+
+    if ((executed_functions / all_functions) < (evaluated_mcdc / all_mcdc)) {
+      return (100 * executed_functions / all_functions).toFixed(1) + "%";
+    } else {
+      return (100 * evaluated_mcdc / all_mcdc).toFixed(1) + "%";
+    }
   }
 
 
