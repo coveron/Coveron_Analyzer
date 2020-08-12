@@ -127,12 +127,10 @@ class CRIParser {
             // check, if this is a condition marker (temporarily save in condition store)
             if (this.cid_helper.get_marker_type(marker_id) == MarkerType.CONDITION) {
                 let marker_result;
-                if (execution_data[cursor + 4] == 0xA6) {
-                    marker_result = MarkerResult.TRUE;
-                } else if (execution_data[cursor + 4] == 0x59) {
+                if (execution_data[cursor + 4] == 0x00) {
                     marker_result = MarkerResult.FALSE;
                 } else {
-                    throw new Error("Undefined marker result for evaluation marker!");
+                    marker_result = MarkerResult.TRUE;
                 }
 
                 this.temp_condition_markers.push({ "evaluation_marker_id": marker_id, "result": marker_result });
@@ -146,12 +144,10 @@ class CRIParser {
                     throw new Error("Marker data corrupted! Expected condition evaluation before decision evaluation.");
                 }
                 let marker_result;
-                if (execution_data[cursor + 4] == 0xA6) {
-                    marker_result = MarkerResult.TRUE;
-                } else if (execution_data[cursor + 4] == 0x59) {
+                if (execution_data[cursor + 4] == 0x00) {
                     marker_result = MarkerResult.FALSE;
                 } else {
-                    throw new Error("Undefined marker result for evaluation marker!");
+                    marker_result = MarkerResult.TRUE;
                 }
 
                 // create data for CIDHelper
