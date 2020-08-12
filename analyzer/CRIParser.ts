@@ -129,8 +129,10 @@ class CRIParser {
                 let marker_result;
                 if (execution_data[cursor + 4] == 0x00) {
                     marker_result = MarkerResult.FALSE;
-                } else {
+                } else if (execution_data[cursor + 4] == 0x01) {
                     marker_result = MarkerResult.TRUE;
+                } else {
+                    throw new Error("Marker data corrupted! Evaluation result value is not acceptable.");
                 }
 
                 this.temp_condition_markers.push({ "evaluation_marker_id": marker_id, "result": marker_result });
@@ -146,8 +148,10 @@ class CRIParser {
                 let marker_result;
                 if (execution_data[cursor + 4] == 0x00) {
                     marker_result = MarkerResult.FALSE;
-                } else {
+                } else if (execution_data[cursor + 4] == 0x01) {
                     marker_result = MarkerResult.TRUE;
+                } else {
+                    throw new Error("Marker data corrupted! Evaluation result value is not acceptable.");
                 }
 
                 // create data for CIDHelper
