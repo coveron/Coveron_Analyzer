@@ -4,7 +4,6 @@ import { runInThisContext } from 'vm';
 const pako = require('pako');
 const { readFileSync, writeFile } = require("fs");
 const atob = require("atob");
-const btoa = require("btoa");
 
 const { CRIParser } = require("./CRIParser");
 const { FunctionCovAnalyzer } = require("./FunctionCovAnalyzer");

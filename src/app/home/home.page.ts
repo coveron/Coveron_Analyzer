@@ -36,7 +36,7 @@ export class HomePage {
     if (percentage > 0.9) {
       return 'success';
     } else if (percentage > 0.75) {
-      return 'yellow';
+      return 'warning';
     } else {
       return 'danger';
     }
@@ -238,6 +238,7 @@ export class HomePage {
           );
         }
 
+
         // markup conditions for mcdc coverage
         branch_result['conditions'].forEach(condition => {
           for (let condition_active_line = condition['code_section']['start_line']; condition_active_line <= condition['code_section']['end_line']; condition_active_line++) {
@@ -264,6 +265,7 @@ export class HomePage {
             );
           }
         });
+
       });
     });
 
@@ -453,7 +455,6 @@ export class HomePage {
         }
       });
     });
-
 
   }
 

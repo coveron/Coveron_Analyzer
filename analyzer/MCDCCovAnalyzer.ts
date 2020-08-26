@@ -37,7 +37,7 @@ exports.MCDCCovAnalyzer = class MCDCCovAnalyzer {
             if_branch['branch_results'].forEach(branch_result => {
                 let mcdc_coverage = {};
                 if (!('executions' in branch_result)) {
-                    mcdc_coverage = { evaluated_mcdc: 0, notevaluated_mcdc: branch_result['conditions'].length }
+                    mcdc_coverage = { evaluated_mcdc: 0, notevaluated_mcdc: branch_result['conditions'].length || 0 };
                 } else {
                     mcdc_coverage = this.calculate_evaluation_mcdc_coverage(branch_result['executions'], branch_result['conditions']);
                 }
@@ -122,7 +122,7 @@ exports.MCDCCovAnalyzer = class MCDCCovAnalyzer {
                 functionData['evaluated_mcdc'] =
                     (functionData['evaluated_mcdc'] + evaluated_mcdc) || evaluated_mcdc;
                 functionData['notevaluated_mcdc'] =
-                    (functionData['notevaluated_mcdc'] + evaluated_mcdc) || evaluated_mcdc;
+                    (functionData['notevaluated_mcdc'] + notevaluated_mcdc) || notevaluated_mcdc;
             }
         });
     }

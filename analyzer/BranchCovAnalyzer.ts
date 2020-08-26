@@ -20,30 +20,34 @@ exports.BranchCovAnalyzer = class BranchCovAnalyzer {
         this.parse_if_branches();
 
         this.parse_switch_branches();
+
+        this.parse_loops();
     }
 
     parse_if_branches() {
         // parses the if branches for evaluations for true and false
         this.cid_data['code_data']['if_branches'].forEach(if_branch => {
-            let taken_branches = 0;
-            let nottaken_branches = if_branch['branch_results'].length;
-
-            for (let i = 0; i < if_branch['branch_results'].length; i++) {
-                if ('executions' in if_branch['branch_results'][i] &&
-                    if_branch['branch_results'][i]['evaluations_true'] > 0) {
-                    // branch was taken
-                    taken_branches++;
-                    nottaken_branches--;
-                } else if (if_branch['branch_results'][i]['evaluation_marker_id'] == -1 &&
-                    'executions' in if_branch['branch_results'][i - 1] &&
-                    if_branch['branch_results'][i - 1]['evaluations_false'] > 0) {
-                    // alternative check for else branches
-                    taken_branches++;
-                    nottaken_branches--;
+            if_branch['branch_results'].forEach(branch_result => {
+                let taken_branches = 0
+                let nottaken_branches = 2
+                if ('executions' in branch_result &&
+                    branch_result['evaluations_true'] > 0 && branch_result['evaluations_false'] > 0) {
+                    // both decision paths taken
+                    taken_branches = 2
+                    nottaken_branches = 0
+                } else if ('executions' in branch_result &&
+                    (branch_result['evaluations_true'] > 0 || branch_result['evaluations_false'] > 0)) {
+                    // one decision path taken
+                    taken_branches = 1
+                    nottaken_branches = 1
+                } else {
+                    // no decision taken
+                    taken_branches = 0
+                    nottaken_branches = 2
                 }
-            }
 
-            this.add_branch_coverage_info(taken_branches, nottaken_branches, if_branch['function_id']);
+                this.add_branch_coverage_info(taken_branches, nottaken_branches, if_branch['function_id']);
+            });
         });
     }
 
@@ -61,6 +65,31 @@ exports.BranchCovAnalyzer = class BranchCovAnalyzer {
             }
 
             this.add_branch_coverage_info(taken_branches, nottaken_branches, switch_branch['function_id']);
+        });
+    }
+
+    parse_loops() {
+        // parses loops for evaluations for true and false
+        this.cid_data['code_data']['loops'].forEach(loop => {
+            let taken_branches = 0
+            let nottaken_branches = 2
+            if ('executions' in loop &&
+                loop['evaluations_true'] > 0 && loop['evaluations_false'] > 0) {
+                // both decision paths taken
+                taken_branches = 2
+                nottaken_branches = 0
+            } else if ('executions' in loop &&
+                (loop['evaluations_true'] > 0 || loop['evaluations_false'] > 0)) {
+                // one decision path taken
+                taken_branches = 1
+                nottaken_branches = 1
+            } else {
+                // no decision taken
+                taken_branches = 0
+                nottaken_branches = 2
+            }
+
+            this.add_branch_coverage_info(taken_branches, nottaken_branches, loop['function_id']);
         });
     }
 
