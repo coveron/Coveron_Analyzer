@@ -16,7 +16,7 @@
     "xmlbuilder2": "^2.2.0"
   },
   "devDependencies": {
-    "electron": "^8.0.0"
+    "electron": "^11.5.0"
   },
   "keywords": [
     "capacitor",
